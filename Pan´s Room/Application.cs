@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using ConsoleTables;
 using Models;
 using Repository;
 using Services;
@@ -33,6 +35,9 @@ namespace Pan_s_Room
                 Console.WriteLine("Choose one of the following options:");
                 Console.WriteLine("1- Register a new record");
                 Console.WriteLine("2- See all registered records");
+                Console.WriteLine("Or type 'exit' to quit the application");
+                Console.WriteLine();
+                Console.Write("You choose option: ");
                 option = Console.ReadLine();
 
                 switch (option)
@@ -55,11 +60,11 @@ namespace Pan_s_Room
 
         private void RetrieveAllRecords()
         {
-            var discs = _discServices.GetDiscs();
-            foreach (var disc in discs)
-            {
-                Console.WriteLine(disc.Name);
-            }
+            var discs = _discServices.GetDiscs()
+                .OrderBy(d => d.Artist.Name)
+                .ThenBy(d => d.Year)
+                .ToList();
+            WriteTable(discs);
         }
 
         private void RegisterNewRecord()
@@ -74,7 +79,9 @@ namespace Pan_s_Room
             Console.Write("Record Year: ");
             disc.Year = Convert.ToInt32(Console.ReadLine());
 
-            _discServices.AddDisc(disc);
+            var addedDisc = _discServices.AddDisc(disc);
+            Console.WriteLine("You´ve just added this disc to your collection:");
+            WriteTable(new List<Disc>() { addedDisc });
         }
 
         private void ResizeWindow()
@@ -108,6 +115,18 @@ namespace Pan_s_Room
                 Console.WriteLine(line);
             }
             Console.WriteLine("\n\n");
+        }
+
+        private static void WriteTable(List<Disc> discs)
+        {
+            var table = new ConsoleTable("Disc", "Artist", "Year");
+
+            foreach (var disc in discs)
+            {
+                table.AddRow(disc.Name, disc.Artist.Name, disc.Year);
+            }
+
+            table.Write();
         }
     }
 }
