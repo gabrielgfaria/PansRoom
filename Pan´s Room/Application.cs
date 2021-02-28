@@ -43,10 +43,12 @@ namespace Pan_s_Room
                 switch (option)
                 {
                     case "1":
+                        ClearScreen();
                         RegisterNewRecord();
-                        Console.WriteLine();
+                        ClearScreen();
                         break;
                     case "2":
+                        ClearScreen();
                         RetrieveAllRecords();
                         Console.WriteLine();
                         break;
@@ -79,14 +81,27 @@ namespace Pan_s_Room
             Console.Write("Record Year: ");
             disc.Year = Convert.ToInt32(Console.ReadLine());
 
-            var addedDisc = _discServices.AddDisc(disc);
-            Console.WriteLine("You´ve just added this disc to your collection:");
-            WriteTable(new List<Disc>() { addedDisc });
+            Console.WriteLine("You´re about to add this disc to your collection:\n");
+            WriteTable(new List<Disc>() { disc });
+            Console.WriteLine();
+            Console.WriteLine("Is it correct? [Y] or [N]");
+            var answer = Console.ReadLine();
+            
+            if(answer.ToLower() == "y" || answer.ToLower() == "yes")
+            {
+                var addedDisc = _discServices.AddDisc(disc);
+                Console.WriteLine("The disc was added to your collection!\n");
+            }
+            else if (answer.ToLower() == "n" || answer.ToLower() == "no")
+            {
+                RegisterNewRecord();
+            }
+
         }
 
         private void ResizeWindow()
         {
-            Console.WindowWidth = 100;
+            Console.WindowWidth = 90;
         }
 
         private void WelcomeUser()
@@ -127,6 +142,12 @@ namespace Pan_s_Room
             }
 
             table.Write();
+        }
+
+        private void ClearScreen()
+        {
+            Console.Clear();
+            WelcomeUser();
         }
     }
 }
