@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Pan_s_Room.Models;
-using Pan_s_Room.Repository;
+using Models;
+using Repository;
 
-namespace Pan_s_Room.Service
+namespace Services
 {
-    public class DiscOperations : IDiscOperations
+    public class DiscServices : IDiscServices
     {
         private IDiscRepository _discRepository;
 
-        public DiscOperations(IDiscRepository discRepository)
+        public DiscServices(IDiscRepository discRepository)
         {
             _discRepository = discRepository;
         }

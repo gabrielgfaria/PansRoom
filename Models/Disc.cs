@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Pan_s_Room.Models
+namespace Models
 {
     public class Disc
     {
         public string Name { get; set; }
         public Artist Artist { get; set; }
         public int Year { get; set; }
-        public Genre Genre { get; set; }
+        public string Genre { get; set; }
         public List<string> Tracklist { get; set; }
     }
 }
