@@ -75,11 +75,31 @@ namespace Pan_s_Room
 
         private void RetrieveAllRecordsFromWishList()
         {
-            var discs = _wishListServices.GetDiscs()
+            var wishListDiscs = _wishListServices.GetDiscs()
                 .OrderBy(d => d.Artist.Name)
                 .ThenBy(d => d.Year)
                 .ToList();
-            WriteTable(discs);
+            var discs = _discServices.GetDiscs();
+
+            WriteTable(TransformIntoWishList(wishListDiscs, discs));
+        }
+
+        private WishList TransformIntoWishList(List<Disc> wishListDiscs, List<Disc> discs)
+        {
+            var wishList = new WishList();
+            wishList.Discs = new List<WishListDisc>();
+
+            foreach(var wishListDisc in wishListDiscs)
+            {
+                var discInWishList = new WishListDisc();
+                discInWishList.Name = wishListDisc.Name;
+                discInWishList.Artist = wishListDisc.Artist;
+                discInWishList.Year = wishListDisc.Year;
+                discInWishList.AlreadyInCollection = discs.Any(d => d.Name == wishListDisc.Name && d.Artist.Name == wishListDisc.Artist.Name);
+
+                wishList.Discs.Add(discInWishList);
+            }
+            return wishList;
         }
 
         private void RegisterNewRecordToWishList()
@@ -102,8 +122,7 @@ namespace Pan_s_Room
 
             if (answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
-                var addedDisc = _wishListServices.AddDisc(disc);
-                Console.WriteLine("The disc was added to your wish list!\n");
+                _wishListServices.AddDisc(disc);
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
@@ -140,8 +159,7 @@ namespace Pan_s_Room
             
             if(answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
-                var addedDisc = _discServices.AddDisc(disc);
-                Console.WriteLine("The disc was added to your collection!\n");
+                _discServices.AddDisc(disc);
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
@@ -189,6 +207,21 @@ namespace Pan_s_Room
             foreach (var disc in discs)
             {
                 table.AddRow(disc.Name, disc.Artist.Name, disc.Year);
+            }
+
+            table.Write();
+        }
+
+        private static void WriteTable(WishList discs)
+        {
+            var table = new ConsoleTable("Disc", "Artist", "Year", "Already In Collection");
+
+            foreach (var disc in discs.Discs)
+            {
+                table.AddRow(disc.Name,
+                    disc.Artist.Name,
+                    disc.Year,
+                    disc.AlreadyInCollection == true ? "Yes" : "No");
             }
 
             table.Write();

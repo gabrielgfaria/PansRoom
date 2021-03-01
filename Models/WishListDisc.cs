@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Models
 {
-    public class WishList
+    public class WishListDisc : Disc
     {
-        public List<WishListDisc> Discs { get; set; }
+        public bool AlreadyInCollection { get; set; }
     }
 }
