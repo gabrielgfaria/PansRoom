@@ -76,7 +76,7 @@ namespace Pan_s_Room
         private void RetrieveAllRecordsFromWishList()
         {
             var wishListDiscs = _wishListServices.GetDiscs()
-                .OrderBy(d => d.Artist.Name)
+                .OrderBy(d => d.Artist.Name.ToLower().Replace("the", ""))
                 .ThenBy(d => d.Year)
                 .ToList();
             var discs = _discServices.GetDiscs();
@@ -133,7 +133,7 @@ namespace Pan_s_Room
         private void RetrieveAllRecords()
         {
             var discs = _discServices.GetDiscs()
-                .OrderBy(d => d.Artist.Name)
+                .OrderBy(d => d.Artist.Name.ToLower().Replace("the", ""))
                 .ThenBy(d => d.Year)
                 .ToList();
             WriteTable(discs);
