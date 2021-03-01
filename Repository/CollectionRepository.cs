@@ -13,6 +13,12 @@ namespace Repository
             @"./resources/Discs.txt" :
             @"./resources/WishList.txt";
 
+        public CollectionRepository()
+        {
+            var teste = _connectionString.Substring(_connectionString.IndexOf('.'), _connectionString.LastIndexOf('/') - _connectionString.IndexOf('.'));
+            Directory.CreateDirectory(teste);
+        }
+
         public List<Disc> GetDiscs()
         {
             var jDiscs = "";
