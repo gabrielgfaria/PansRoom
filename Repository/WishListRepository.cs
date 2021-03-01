@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Models;
 using Newtonsoft.Json;
 
 namespace Repository
 {
-    public class DiscRepository : IDiscRepository
+    public class WishListRepository : IWishListRepository
     {
-        private string _connectionString = @"./resources/Discs.txt";
+        private string _connectionString = @"./resources/WishList.txt";
 
         public List<Disc> GetDiscs()
         {
@@ -25,6 +26,7 @@ namespace Repository
         public void SaveDiscs(List<Disc> discs)
         {
             var jDiscs = JsonConvert.SerializeObject(discs);
+            
             File.WriteAllText(_connectionString, jDiscs);
         }
     }

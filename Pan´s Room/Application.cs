@@ -11,13 +11,14 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly IDiscServices _discServices;
-        private readonly IDiscRepository _discRepository;
+        private readonly ICollectionServices<IDiscRepository> _discServices;
+        private readonly ICollectionServices<IWishListRepository> _wishListServices;
 
-        public Application(IDiscServices discServices, IDiscRepository discRepository)
+        public Application(ICollectionServices<IDiscRepository> discServices,
+            ICollectionServices<IWishListRepository> wishListServices)
         {
             _discServices = discServices;
-            _discRepository = discRepository;
+            _wishListServices = wishListServices;
         }
 
         public void Run()
@@ -34,8 +35,10 @@ namespace Pan_s_Room
             {
                 Console.WriteLine("Choose one of the following options:");
                 Console.WriteLine("1- Register a new record");
-                Console.WriteLine("2- See all registered records");
-                Console.WriteLine("Or type 'exit' to quit the application");
+                Console.WriteLine("2- Add a new record to your wish-list");
+                Console.WriteLine("3- See all registered records");
+                Console.WriteLine("4- See all records on your wish-list");
+                Console.WriteLine("\nOr type 'exit' to quit the application");
                 Console.WriteLine();
                 Console.Write("You choose option: ");
                 option = Console.ReadLine();
@@ -49,7 +52,17 @@ namespace Pan_s_Room
                         break;
                     case "2":
                         ClearScreen();
+                        RegisterNewRecordToWishList();
+                        ClearScreen();
+                        break;
+                    case "3":
+                        ClearScreen();
                         RetrieveAllRecords();
+                        Console.WriteLine();
+                        break;
+                    case "4":
+                        ClearScreen();
+                        RetrieveAllRecordsFromWishList();
                         Console.WriteLine();
                         break;
                     case "exit":
@@ -57,6 +70,44 @@ namespace Pan_s_Room
                     default:
                         break;
                 }
+            }
+        }
+
+        private void RetrieveAllRecordsFromWishList()
+        {
+            var discs = _wishListServices.GetDiscs()
+                .OrderBy(d => d.Artist.Name)
+                .ThenBy(d => d.Year)
+                .ToList();
+            WriteTable(discs);
+        }
+
+        private void RegisterNewRecordToWishList()
+        {
+            var disc = new Disc();
+            var artist = new Artist();
+            Console.Write("Record Name: ");
+            disc.Name = Console.ReadLine();
+            Console.Write("Band or Artist: ");
+            artist.Name = Console.ReadLine();
+            disc.Artist = artist;
+            Console.Write("Record Year: ");
+            disc.Year = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("You´re about to add this disc to your collection:\n");
+            WriteTable(new List<Disc>() { disc });
+            Console.WriteLine();
+            Console.WriteLine("Is it correct? [Y] or [N]");
+            var answer = Console.ReadLine();
+
+            if (answer.ToLower() == "y" || answer.ToLower() == "yes")
+            {
+                var addedDisc = _wishListServices.AddDisc(disc);
+                Console.WriteLine("The disc was added to your wish list!\n");
+            }
+            else if (answer.ToLower() == "n" || answer.ToLower() == "no")
+            {
+                RegisterNewRecordToWishList();
             }
         }
 
@@ -96,7 +147,6 @@ namespace Pan_s_Room
             {
                 RegisterNewRecord();
             }
-
         }
 
         private void ResizeWindow()

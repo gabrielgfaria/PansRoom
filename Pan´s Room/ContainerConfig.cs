@@ -18,9 +18,12 @@ namespace Pan_s_Room
 
             builder.RegisterType<DiscRepository>()
                 .As<IDiscRepository>();
+            builder.RegisterType<WishListRepository>()
+                .As<IWishListRepository>();
 
-            builder.RegisterType<DiscServices>()
-                .As<IDiscServices>();
+            builder.RegisterGeneric(typeof(CollectionServices<>))
+                .As(typeof(ICollectionServices<>))
+                .InstancePerDependency();
 
             return builder.Build();
         }

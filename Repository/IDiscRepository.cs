@@ -3,9 +3,8 @@ using Models;
 
 namespace Repository
 {
-    public interface IDiscRepository
+    public interface IDiscRepository : ICollectionRepository
     {
-        List<Disc> GetDiscs();
-        void SaveDiscs(List<Disc> discs);
+
     }
 }
