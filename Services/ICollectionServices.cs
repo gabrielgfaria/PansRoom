@@ -4,7 +4,7 @@ using Repository;
 
 namespace Services
 {
-    public interface ICollectionServices<T> where T : ICollectionRepository
+    public interface ICollectionServices<T> where T : IRepository
     {
         Disc AddDisc(Disc disc);
         List<Disc> GetDiscs();

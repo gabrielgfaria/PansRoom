@@ -11,11 +11,11 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly ICollectionServices<IDiscRepository> _discServices;
-        private readonly ICollectionServices<IWishListRepository> _wishListServices;
+        private readonly ICollectionServices<ICollectionRepository<Disc>> _discServices;
+        private readonly ICollectionServices<ICollectionRepository<WishList>> _wishListServices;
 
-        public Application(ICollectionServices<IDiscRepository> discServices,
-            ICollectionServices<IWishListRepository> wishListServices)
+        public Application(ICollectionServices<ICollectionRepository<Disc>> discServices,
+            ICollectionServices<ICollectionRepository<WishList>> wishListServices)
         {
             _discServices = discServices;
             _wishListServices = wishListServices;

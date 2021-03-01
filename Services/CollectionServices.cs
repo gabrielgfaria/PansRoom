@@ -8,7 +8,7 @@ using Repository;
 namespace Services
 {
     public class CollectionServices<T> : ICollectionServices<T> 
-        where T : ICollectionRepository
+        where T : IRepository
     {
         private T _repository;
 

@@ -16,10 +16,9 @@ namespace Pan_s_Room
             builder.RegisterType<Application>()
                 .As<IApplication>();
 
-            builder.RegisterType<DiscRepository>()
-                .As<IDiscRepository>();
-            builder.RegisterType<WishListRepository>()
-                .As<IWishListRepository>();
+            builder.RegisterGeneric(typeof(CollectionRepository<>))
+                .As(typeof(ICollectionRepository<>))
+                .InstancePerDependency();
 
             builder.RegisterGeneric(typeof(CollectionServices<>))
                 .As(typeof(ICollectionServices<>))

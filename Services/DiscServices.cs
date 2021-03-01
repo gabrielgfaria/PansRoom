@@ -6,11 +6,11 @@ using Repository;
 
 namespace Services
 {
-    public class DiscServices : CollectionServices<IDiscRepository>
+    public class DiscServices : CollectionServices<ICollectionRepository<Disc>>
     {
-        private IDiscRepository _discRepository;
+        private ICollectionRepository<Disc> _discRepository;
 
-        public DiscServices(IDiscRepository discRepository) 
+        public DiscServices(ICollectionRepository<Disc> discRepository) 
             : base(discRepository)
         {
             _discRepository = discRepository;

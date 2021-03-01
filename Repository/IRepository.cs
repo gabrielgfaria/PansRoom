@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Models;
-using Newtonsoft.Json;
 
 namespace Repository
 {
-    public class WishListRepository : CollectionRepository<WishList>
+    public interface IRepository
     {
+        List<Disc> GetDiscs();
+        void SaveDiscs(List<Disc> discs);
     }
 }
