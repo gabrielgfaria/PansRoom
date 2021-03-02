@@ -23,7 +23,6 @@ namespace Pan_s_Room
 
         public void Run()
         {
-            ResizeWindow();
             WelcomeUser();
             ShowMenu();
         }
@@ -167,13 +166,14 @@ namespace Pan_s_Room
             }
         }
 
-        private void ResizeWindow()
+        private void ResizeWindow(int windowSize)
         {
-            Console.WindowWidth = 90;
+            Console.WindowWidth = windowSize;
         }
 
         private void WelcomeUser()
         {
+            ResizeWindow(90);
             var welcomeTextArray = new[]
             {
                 @" #     #                                                                         ",
@@ -200,7 +200,7 @@ namespace Pan_s_Room
             Console.WriteLine("\n\n");
         }
 
-        private static void WriteTable(List<Disc> discs)
+        private void WriteTable(List<Disc> discs)
         {
             var table = new ConsoleTable("Disc", "Artist", "Year");
 
@@ -208,11 +208,14 @@ namespace Pan_s_Room
             {
                 table.AddRow(disc.Name, disc.Artist.Name, disc.Year);
             }
+            var maxRowSize = table.ToString().Split("\n").Select(el => el.Length).Max();
+            if (maxRowSize > 90)
+                ResizeWindow(maxRowSize);
 
             table.Write();
         }
 
-        private static void WriteTable(WishList discs)
+        private void WriteTable(WishList discs)
         {
             var table = new ConsoleTable("Disc", "Artist", "Year", "Already In Collection");
 
@@ -223,6 +226,10 @@ namespace Pan_s_Room
                     disc.Year,
                     disc.AlreadyInCollection == true ? "Yes" : "No");
             }
+
+            var maxRowSize = table.ToString().Split("\n").Select(el => el.Length).Max();
+            if (maxRowSize > 90)
+                ResizeWindow(maxRowSize);
 
             table.Write();
         }
