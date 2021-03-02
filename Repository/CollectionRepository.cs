@@ -15,8 +15,8 @@ namespace Repository
 
         public CollectionRepository()
         {
-            var teste = _connectionString.Substring(_connectionString.IndexOf('.'), _connectionString.LastIndexOf('/') - _connectionString.IndexOf('.'));
-            Directory.CreateDirectory(teste);
+            var resourceDirectory = _connectionString.Substring(_connectionString.IndexOf('.'), _connectionString.LastIndexOf('/') - _connectionString.IndexOf('.'));
+            Directory.CreateDirectory(resourceDirectory);
         }
 
         public List<Disc> GetDiscs()
