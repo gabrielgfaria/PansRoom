@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using ConsoleTables;
 using Models;
 using Repository;
@@ -122,6 +123,9 @@ namespace Pan_s_Room
             if (answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
                 _wishListServices.AddDisc(disc);
+                ClearScreen();
+                Console.WriteLine("The disc was added to your wishlist!");
+                Task.WaitAll(Task.Delay(3000));
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
@@ -159,6 +163,9 @@ namespace Pan_s_Room
             if(answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
                 _discServices.AddDisc(disc);
+                ClearScreen();
+                Console.WriteLine("The disc was added to your collection!");
+                Task.WaitAll(Task.Delay(3000));
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
