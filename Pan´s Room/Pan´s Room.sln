@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pan´s Room", "Pan´s Room.csproj", "{CBB6A02E-D454-4BD8-A58A-45AF11900828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "..\Services\Services.csproj", "{B64E3D17-E929-4C90-8102-53A67ADE4318}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "..\Services\Services.csproj", "{B64E3D17-E929-4C90-8102-53A67ADE4318}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "..\Models\Models.csproj", "{5B431BC1-3732-480D-8209-81C7024873FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "..\Models\Models.csproj", "{5B431BC1-3732-480D-8209-81C7024873FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "..\Repository\Repository.csproj", "{B25AB57F-B016-404C-AABA-AE506EC4ED89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "..\Repository\Repository.csproj", "{B25AB57F-B016-404C-AABA-AE506EC4ED89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "..\Logger\Logger.csproj", "{D0C67980-E898-41EB-93C8-9EDEAFE44396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B25AB57F-B016-404C-AABA-AE506EC4ED89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B25AB57F-B016-404C-AABA-AE506EC4ED89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B25AB57F-B016-404C-AABA-AE506EC4ED89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C67980-E898-41EB-93C8-9EDEAFE44396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C67980-E898-41EB-93C8-9EDEAFE44396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C67980-E898-41EB-93C8-9EDEAFE44396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C67980-E898-41EB-93C8-9EDEAFE44396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

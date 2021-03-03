@@ -12,13 +12,13 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly ICollectionServices<ICollectionRepository<Disc>> _discServices;
-        private readonly ICollectionServices<ICollectionRepository<WishList>> _wishListServices;
+        private readonly IServiceBase _discServices;
+        private readonly IServiceBase _wishListServices;
 
-        public Application(ICollectionServices<ICollectionRepository<Disc>> discServices,
-            ICollectionServices<ICollectionRepository<WishList>> wishListServices)
+        public Application(IDiscServices discServices,
+            IWishListServices wishListServices)
         {
-            _discServices = discServices;
+            _discServices = (DiscServices)discServices;
             _wishListServices = wishListServices;
         }
 
@@ -122,10 +122,22 @@ namespace Pan_s_Room
 
             if (answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
-                _wishListServices.AddDisc(disc);
-                ClearScreen();
-                Console.WriteLine("The disc was added to your wishlist!");
-                Task.WaitAll(Task.Delay(3000));
+                try
+                {
+                    _wishListServices.AddDisc(disc);
+                }
+                catch
+                {
+                    Console.WriteLine("You already own this disc. Would you like to continue anyways? [Y] or [N]");
+                    var saveAnyways = Console.ReadLine();
+                    if(saveAnyways.ToLower() == "y" || saveAnyways.ToLower() == "yes")
+                    {
+                        _wishListServices.AddDiscAnyways(disc);
+                        ClearScreen();
+                        Console.WriteLine("The disc was added to your wishlist!");
+                        Task.WaitAll(Task.Delay(3000));
+                    }
+                }
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
@@ -162,10 +174,22 @@ namespace Pan_s_Room
             
             if(answer.ToLower() == "y" || answer.ToLower() == "yes")
             {
-                _discServices.AddDisc(disc);
-                ClearScreen();
-                Console.WriteLine("The disc was added to your collection!");
-                Task.WaitAll(Task.Delay(3000));
+                try
+                {
+                    _discServices.AddDisc(disc);
+                }
+                catch (ExistingDiscInCollectionException)
+                {
+                    Console.WriteLine("You already own this disc. Would you like to continue anyways? [Y] or [N]");
+                    var saveAnyways = Console.ReadLine();
+                    if (saveAnyways.ToLower() == "y" || saveAnyways.ToLower() == "yes")
+                    {
+                        _discServices.AddDiscAnyways(disc);
+                        ClearScreen();
+                        Console.WriteLine("The disc was added to your collection!");
+                        Task.WaitAll(Task.Delay(3000));
+                    }
+                }
             }
             else if (answer.ToLower() == "n" || answer.ToLower() == "no")
             {
