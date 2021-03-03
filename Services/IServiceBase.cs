@@ -4,9 +4,11 @@ using Repository;
 
 namespace Services
 {
-    public interface ICollectionServices<T> where T : IRepository
+    public interface IServiceBase
     {
         Disc AddDisc(Disc disc);
+        Disc AddDiscAnyways(Disc disc);
+        void RemoveDisc(Disc disc);
         List<Disc> GetDiscs();
         List<Disc> GetDiscsByAuthor(string author);
         List<Disc> GetDiscsByDiscName(string discName);
