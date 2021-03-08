@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsoleTables;
+using Logger;
 using Models;
 using Repository;
 using Services;
@@ -14,12 +15,15 @@ namespace Pan_s_Room
     {
         private readonly IServiceBase _discServices;
         private readonly IServiceBase _wishListServices;
+        private readonly ILogger _logger;
 
         public Application(IDiscServices discServices,
-            IWishListServices wishListServices)
+            IWishListServices wishListServices,
+            ILogger logger)
         {
             _discServices = (DiscServices)discServices;
             _wishListServices = wishListServices;
+            _logger = logger;
         }
 
         public void Run()
@@ -34,10 +38,12 @@ namespace Pan_s_Room
             while (option != "exit")
             {
                 Console.WriteLine("Choose one of the following options:");
-                Console.WriteLine("1- Register a new record");
+                Console.WriteLine("1- Add a new record to your collection");
                 Console.WriteLine("2- Add a new record to your wish-list");
-                Console.WriteLine("3- See all registered records");
-                Console.WriteLine("4- See all records on your wish-list");
+                Console.WriteLine("3- Remove a record from your collection");
+                Console.WriteLine("4- Remove a record from your wish-list");
+                Console.WriteLine("5- See all registered records");
+                Console.WriteLine("6- See all records on your wish-list");
                 Console.WriteLine("\nOr type 'exit' to quit the application");
                 Console.WriteLine();
                 Console.Write("You choose option: ");
@@ -57,10 +63,20 @@ namespace Pan_s_Room
                         break;
                     case "3":
                         ClearScreen();
+                        RemoveRecordFromCollection();
+                        ClearScreen();
+                        break;
+                    case "4":
+                        ClearScreen();
+                        RemoveRecordFromWishList();
+                        ClearScreen();
+                        break;
+                    case "5":
+                        ClearScreen();
                         RetrieveAllRecords();
                         Console.WriteLine();
                         break;
-                    case "4":
+                    case "6":
                         ClearScreen();
                         RetrieveAllRecordsFromWishList();
                         Console.WriteLine();
@@ -70,6 +86,76 @@ namespace Pan_s_Room
                     default:
                         break;
                 }
+            }
+        }
+
+        private void RemoveRecordFromWishList()
+        {
+            var disc = new Disc();
+            var artist = new Artist();
+            Console.Write("Record Name: ");
+            disc.Name = Console.ReadLine();
+            Console.Write("Band or Artist: ");
+            artist.Name = Console.ReadLine();
+            disc.Artist = artist;
+
+            var discToRemove = _wishListServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).FirstOrDefault();
+
+            Console.WriteLine("You´re about to remove this disc from your wishlist:\n");
+            WriteTable(new List<Disc>() { discToRemove });
+            Console.WriteLine();
+            Console.WriteLine("Is it correct? [Y] or [N]");
+            var answer = Console.ReadLine();
+
+            if (answer.ToLower() == "y" || answer.ToLower() == "yes")
+            {
+                try
+                {
+                    _wishListServices.RemoveDisc(disc);
+                }
+                catch
+                {
+
+                }
+            }
+            else if (answer.ToLower() == "n" || answer.ToLower() == "no")
+            {
+                RemoveRecordFromCollection();
+            }
+        }
+
+        private void RemoveRecordFromCollection()
+        {
+            var disc = new Disc();
+            var artist = new Artist();
+            Console.Write("Record Name: ");
+            disc.Name = Console.ReadLine();
+            Console.Write("Band or Artist: ");
+            artist.Name = Console.ReadLine();
+            disc.Artist = artist;
+
+            var discToRemove = _discServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).FirstOrDefault();
+
+            Console.WriteLine("You´re about to remove this disc from your collection:\n");
+            WriteTable(new List<Disc>() { discToRemove });
+            Console.WriteLine();
+            Console.WriteLine("Is it correct? [Y] or [N]");
+            var answer = Console.ReadLine();
+
+            if (answer.ToLower() == "y" || answer.ToLower() == "yes")
+            {
+                try
+                {
+                    _discServices.RemoveDisc(disc);
+                }
+                catch
+                {
+
+                }
+            }
+            else if (answer.ToLower() == "n" || answer.ToLower() == "no")
+            {
+                RemoveRecordFromCollection();
             }
         }
 
@@ -114,7 +200,7 @@ namespace Pan_s_Room
             Console.Write("Record Year: ");
             disc.Year = Convert.ToInt32(Console.ReadLine());
 
-            Console.WriteLine("You´re about to add this disc to your collection:\n");
+            Console.WriteLine("You´re about to add this disc to your wishlist:\n");
             WriteTable(new List<Disc>() { disc });
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
@@ -134,8 +220,7 @@ namespace Pan_s_Room
                     {
                         _wishListServices.AddDiscAnyways(disc);
                         ClearScreen();
-                        Console.WriteLine("The disc was added to your wishlist!");
-                        Task.WaitAll(Task.Delay(3000));
+                        _logger.Log();
                     }
                 }
             }
@@ -186,8 +271,7 @@ namespace Pan_s_Room
                     {
                         _discServices.AddDiscAnyways(disc);
                         ClearScreen();
-                        Console.WriteLine("The disc was added to your collection!");
-                        Task.WaitAll(Task.Delay(3000));
+                        _logger.Log();
                     }
                 }
             }

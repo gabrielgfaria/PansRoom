@@ -1,12 +1,22 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Logger
 {
     public class Logger : ILogger
     {
-        public void Log(string message)
+        public Logger()
         {
-            Console.WriteLine(message);
+        }
+
+        public static string LogMessage { get; private set; }
+
+        public void SetLogMessage(string message) => LogMessage = message;
+
+        public void Log()
+        {
+            Console.WriteLine(LogMessage);
+            Task.WaitAll(Task.Delay(3000));
         }
     }
 }

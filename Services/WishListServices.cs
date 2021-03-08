@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Logger;
 using Models;
 using Repository;
 
@@ -11,12 +12,15 @@ namespace Services
     {
         private ICollectionRepository<WishList> _wishListRepository;
         private ICollectionRepository<Disc> _discRepository;
+        private ILogger _logger;
 
         public WishListServices(ICollectionRepository<WishList> wishListRepository,
-            ICollectionRepository<Disc> discRepository)
+            ICollectionRepository<Disc> discRepository,
+            ILogger logger)
         {
             _wishListRepository = wishListRepository;
             _discRepository = discRepository;
+            _logger = logger;
         }
 
         public override Disc AddDisc(Disc disc)
@@ -30,6 +34,7 @@ namespace Services
             }
             wishListDiscs.Add(disc);
             SaveDiscs(wishListDiscs);
+            _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
             return disc;
         }

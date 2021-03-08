@@ -46,7 +46,7 @@ namespace Services
         public virtual void RemoveDisc(Disc disc)
         {
             var existingDiscs = GetDiscsFromRepository();
-            existingDiscs.Remove(existingDiscs.Single(d => d.Name == disc.Name && d.Artist.Name == disc.Artist.Name));
+            existingDiscs = existingDiscs.Except(existingDiscs.Where(d => d.Name.ToLower() == disc.Name.ToLower() && d.Artist.Name.ToLower() == disc.Artist.Name.ToLower())).ToList();
 
             SaveDiscs(existingDiscs);
         }

@@ -29,7 +29,6 @@ namespace Pan_s_Room
             builder.RegisterType<Logger.Logger>()
                 .As<ILogger>();
 
-
             return builder.Build();
         }
     }
