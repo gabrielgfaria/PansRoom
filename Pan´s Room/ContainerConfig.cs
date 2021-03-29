@@ -4,6 +4,7 @@ using System.Text;
 using Autofac;
 using Logger;
 using Repository;
+using Repository.Models;
 using Services;
 
 namespace Pan_s_Room
@@ -28,6 +29,8 @@ namespace Pan_s_Room
 
             builder.RegisterType<Logger.Logger>()
                 .As<ILogger>();
+
+            builder.RegisterType<PansRoomContext>().AsSelf();
 
             return builder.Build();
         }

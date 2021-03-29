@@ -37,16 +37,7 @@ namespace Pan_s_Room
             var option = "";
             while (option != "exit")
             {
-                Console.WriteLine("Choose one of the following options:");
-                Console.WriteLine("1- Add a new record to your collection");
-                Console.WriteLine("2- Add a new record to your wish-list");
-                Console.WriteLine("3- Remove a record from your collection");
-                Console.WriteLine("4- Remove a record from your wish-list");
-                Console.WriteLine("5- See all registered records");
-                Console.WriteLine("6- See all records on your wish-list");
-                Console.WriteLine("\nOr type 'exit' to quit the application");
-                Console.WriteLine();
-                Console.Write("You choose option: ");
+                PresentOptions();
                 option = Console.ReadLine();
 
                 switch (option)
@@ -55,21 +46,25 @@ namespace Pan_s_Room
                         ClearScreen();
                         RegisterNewRecord();
                         ClearScreen();
+                        _logger.Log();
                         break;
                     case "2":
                         ClearScreen();
                         RegisterNewRecordToWishList();
                         ClearScreen();
+                        _logger.Log();
                         break;
                     case "3":
                         ClearScreen();
                         RemoveRecordFromCollection();
                         ClearScreen();
+                        _logger.Log();
                         break;
                     case "4":
                         ClearScreen();
                         RemoveRecordFromWishList();
                         ClearScreen();
+                        _logger.Log();
                         break;
                     case "5":
                         ClearScreen();
@@ -89,6 +84,20 @@ namespace Pan_s_Room
             }
         }
 
+        private static void PresentOptions()
+        {
+            Console.WriteLine("Choose one of the following options:");
+            Console.WriteLine("1- Add a new record to your collection");
+            Console.WriteLine("2- Add a new record to your wish-list");
+            Console.WriteLine("3- Remove a record from your collection");
+            Console.WriteLine("4- Remove a record from your wish-list");
+            Console.WriteLine("5- See all registered records");
+            Console.WriteLine("6- See all records on your wish-list");
+            Console.WriteLine("\nOr type 'exit' to quit the application");
+            Console.WriteLine();
+            Console.Write("You choose option: ");
+        }
+
         private void RemoveRecordFromWishList()
         {
             var disc = new Disc();
@@ -99,10 +108,10 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discToRemove = _wishListServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).FirstOrDefault();
+            var discsToRemove = _wishListServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
 
-            Console.WriteLine("You´re about to remove this disc from your wishlist:\n");
-            WriteTable(new List<Disc>() { discToRemove });
+            Console.WriteLine("You´re about to remove the following disc(s) from your wishlist:\n");
+            WriteTable(discsToRemove);
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
             var answer = Console.ReadLine();
@@ -134,10 +143,10 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discToRemove = _discServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).FirstOrDefault();
+            var discsToRemove = _discServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
 
-            Console.WriteLine("You´re about to remove this disc from your collection:\n");
-            WriteTable(new List<Disc>() { discToRemove });
+            Console.WriteLine("You´re about to remove the following disc(s) from your collection:\n");
+            WriteTable(discsToRemove);
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
             var answer = Console.ReadLine();
@@ -220,7 +229,6 @@ namespace Pan_s_Room
                     {
                         _wishListServices.AddDiscAnyways(disc);
                         ClearScreen();
-                        _logger.Log();
                     }
                 }
             }
@@ -271,7 +279,6 @@ namespace Pan_s_Room
                     {
                         _discServices.AddDiscAnyways(disc);
                         ClearScreen();
-                        _logger.Log();
                     }
                 }
             }
