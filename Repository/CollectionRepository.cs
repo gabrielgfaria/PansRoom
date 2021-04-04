@@ -1,40 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Models;
-using Newtonsoft.Json;
+﻿using Models;
+using Repository.Context;
 
 namespace Repository
 {
-    public class CollectionRepository<T> : ICollectionRepository<T>
+    public class CollectionRepository : EntityRepository<Collection>
     {
-        private string _connectionString = typeof(T) == typeof(Disc) ?
-            @"./resources/Discs.txt" :
-            @"./resources/WishList.txt";
-
-        public CollectionRepository()
+        public CollectionRepository(PansRoomContext context)
+            : base(context)
         {
-            var resourceDirectory = _connectionString.Substring(_connectionString.IndexOf('.'), _connectionString.LastIndexOf('/') - _connectionString.IndexOf('.'));
-            Directory.CreateDirectory(resourceDirectory);
-        }
-
-        public List<Disc> GetDiscs()
-        {
-            var jDiscs = "";
-            if (File.Exists(_connectionString))
-            {
-                jDiscs = File.ReadAllText(_connectionString);
-            }
-            var discs = !string.IsNullOrWhiteSpace(jDiscs) ? JsonConvert.DeserializeObject<List<Disc>>(jDiscs) : new List<Disc>();
-
-            return discs;
-        }
-
-        public void SaveDiscs(List<Disc> discs)
-        {
-            var jDiscs = JsonConvert.SerializeObject(discs);
-            File.WriteAllText(_connectionString, jDiscs);
         }
     }
 }

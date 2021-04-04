@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Models;
 
 #nullable disable
 
-namespace Repository.Models
+namespace Repository.Context
 {
     public partial class PansRoomContext : DbContext
     {
@@ -43,8 +44,6 @@ namespace Repository.Models
 
             modelBuilder.Entity<Collection>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("Collection");
 
                 entity.HasOne(d => d.Disc)
@@ -69,8 +68,6 @@ namespace Repository.Models
 
             modelBuilder.Entity<WishList>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("WishList");
 
                 entity.HasOne(d => d.Disc)

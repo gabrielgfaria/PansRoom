@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Models;
-using Newtonsoft.Json;
+﻿using Models;
+using Repository.Context;
 
 namespace Repository
 {
-    public class DiscRepository : CollectionRepository<Disc>
+    public class DiscRepository : EntityRepository<Disc>
     {
+        public DiscRepository(PansRoomContext context)
+            : base(context)
+        {
+        }
     }
 }

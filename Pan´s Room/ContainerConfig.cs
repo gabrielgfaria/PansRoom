@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Autofac;
+﻿using Autofac;
 using Logger;
+using Models;
 using Repository;
-using Repository.Models;
+using Repository.Context;
 using Services;
 
 namespace Pan_s_Room
@@ -18,18 +16,22 @@ namespace Pan_s_Room
             builder.RegisterType<Application>()
                 .As<IApplication>();
 
-            builder.RegisterType<DiscServices>()
-                .As<IDiscServices>();
+            //Services
+            builder.RegisterType<CollectionServices>()
+                .As<ICollectionServices>();
             builder.RegisterType<WishListServices>()
                 .As<IWishListServices>();
 
-            builder.RegisterGeneric(typeof(CollectionRepository<>))
-                .As(typeof(ICollectionRepository<>))
+            //Repository
+            builder.RegisterGeneric(typeof(EntityRepository<>))
+                .As(typeof(IEntityRepository<>))
                 .InstancePerDependency();
 
+            //Logger
             builder.RegisterType<Logger.Logger>()
                 .As<ILogger>();
 
+            //DbContext
             builder.RegisterType<PansRoomContext>().AsSelf();
 
             return builder.Build();

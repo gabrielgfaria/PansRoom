@@ -13,15 +13,15 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly IServiceBase _discServices;
-        private readonly IServiceBase _wishListServices;
+        private readonly ICollectionServices _discServices;
+        private readonly IWishListServices _wishListServices;
         private readonly ILogger _logger;
 
-        public Application(IDiscServices discServices,
+        public Application(ICollectionServices discServices,
             IWishListServices wishListServices,
             ILogger logger)
         {
-            _discServices = (DiscServices)discServices;
+            _discServices = discServices;
             _wishListServices = wishListServices;
             _logger = logger;
         }
@@ -108,10 +108,10 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discsToRemove = _wishListServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
+            var discsToRemove = _wishListServices.GetDiscs().Where(d => d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Disc.Name.ToLower() == disc.Name.ToLower()).ToList();
 
             Console.WriteLine("You´re about to remove the following disc(s) from your wishlist:\n");
-            WriteTable(discsToRemove);
+            WriteTable(discsToRemove.Select(d => d.Disc).ToList());
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
             var answer = Console.ReadLine();
@@ -171,28 +171,26 @@ namespace Pan_s_Room
         private void RetrieveAllRecordsFromWishList()
         {
             var wishListDiscs = _wishListServices.GetDiscs()
-                .OrderBy(d => d.Artist.Name.ToLower().Replace("the", ""))
-                .ThenBy(d => d.Year)
+                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the", ""))
+                .ThenBy(d => d.Disc.Year)
                 .ToList();
-            var discs = _discServices.GetDiscs();
 
-            WriteTable(TransformIntoWishList(wishListDiscs, discs));
+            WriteTable(wishListDiscs);
         }
 
-        private WishList TransformIntoWishList(List<Disc> wishListDiscs, List<Disc> discs)
+        private List<WishList> TransformIntoWishList(List<WishList> wishListDiscs, List<Disc> discs)
         {
-            var wishList = new WishList();
-            wishList.Discs = new List<WishListDisc>();
+            var wishList = new List<WishList>();
 
             foreach(var wishListDisc in wishListDiscs)
             {
-                var discInWishList = new WishListDisc();
-                discInWishList.Name = wishListDisc.Name;
-                discInWishList.Artist = wishListDisc.Artist;
-                discInWishList.Year = wishListDisc.Year;
-                discInWishList.AlreadyInCollection = discs.Any(d => d.Name == wishListDisc.Name && d.Artist.Name == wishListDisc.Artist.Name);
+                var discInWishList = new WishList();
+                discInWishList.Disc.Name = wishListDisc.Disc.Name;
+                discInWishList.Disc.Artist = wishListDisc.Disc.Artist;
+                discInWishList.Disc.Year = wishListDisc.Disc.Year;
+                discInWishList.AlreadyInCollection = discs.Any(d => d.Name == wishListDisc.Disc.Name && d.Artist.Name == wishListDisc.Disc.Artist.Name);
 
-                wishList.Discs.Add(discInWishList);
+                wishList.Add(discInWishList);
             }
             return wishList;
         }
@@ -221,7 +219,7 @@ namespace Pan_s_Room
                 {
                     _wishListServices.AddDisc(disc);
                 }
-                catch
+                catch (Exception ex)
                 {
                     Console.WriteLine("You already own this disc. Would you like to continue anyways? [Y] or [N]");
                     var saveAnyways = Console.ReadLine();
@@ -337,15 +335,15 @@ namespace Pan_s_Room
             table.Write();
         }
 
-        private void WriteTable(WishList discs)
+        private void WriteTable(List<WishList> discs)
         {
             var table = new ConsoleTable("Disc", "Artist", "Year", "Already In Collection");
 
-            foreach (var disc in discs.Discs)
+            foreach (var disc in discs)
             {
-                table.AddRow(disc.Name,
-                    disc.Artist.Name,
-                    disc.Year,
+                table.AddRow(disc.Disc.Name,
+                    disc.Disc.Artist.Name,
+                    disc.Disc.Year,
                     disc.AlreadyInCollection == true ? "Yes" : "No");
             }
 

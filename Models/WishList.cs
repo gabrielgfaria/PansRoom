@@ -4,8 +4,12 @@ using System.Text;
 
 namespace Models
 {
-    public class WishList
+    public partial class WishList
     {
-        public List<WishListDisc> Discs { get; set; }
+        public int Id { get; set; }
+        public int DiscId { get; set; }
+        public bool AlreadyInCollection { get; set; }
+
+        public virtual Disc Disc { get; set; }
     }
 }

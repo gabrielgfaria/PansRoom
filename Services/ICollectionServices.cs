@@ -3,12 +3,12 @@ using Models;
 
 namespace Services
 {
-    public interface IWishListServices
+    public interface ICollectionServices
     {
         Disc AddDisc(Disc disc);
         Disc AddDiscAnyways(Disc disc);
-        List<WishList> GetDiscs();
+        List<Disc> GetDiscs();
+        void SaveDisc(Disc disc);
         void RemoveDisc(Disc disc);
-        void SaveDisc(WishList disc);
     }
 }
