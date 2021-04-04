@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 using Models;
 
 #nullable disable
@@ -25,9 +26,16 @@ namespace Repository.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json").Build();
+
+
+            var connectionString = config.GetConnectionString("ConnectionStringPRD");
+
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(LocalDB)\\TesteFaria;Database=Pan´sRoom;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
