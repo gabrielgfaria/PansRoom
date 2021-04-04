@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 # User defined files
-.json
+*.json
