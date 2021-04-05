@@ -63,13 +63,20 @@ namespace Services
 
         public Disc AddDiscAnyways(Disc disc)
         {
-            var wishList = _wishListRepository.FindAll();
+            var wishList = _wishListRepository.FindAllIncludingNestedProps("Disc.Artist").ToList();
             if (wishList.Select(d => d.Disc).Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
                 d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
             {
                 var discToRemove = wishList.Where(d => d.Disc.Name.ToLower() == disc.Name.ToLower() &&
                 d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower()).FirstOrDefault();
                 _wishListRepository.Remove(discToRemove);
+            }
+            var artists = _artistRepository.FindAll();
+            var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
+            if (existingArtist != null)
+            {
+                disc.Artist = null;
+                disc.ArtistId = existingArtist.Id;
             }
             var addedDisc = _collectionRepository.Add(new Collection() { Disc = disc });
             _logger.SetLogMessage("The disc was successfully added to your collection");
@@ -82,8 +89,9 @@ namespace Services
 
         public void RemoveDisc(Disc disc)
         {
-            var discToRemove = _discRepository.FindAll().Where(d => d == disc).FirstOrDefault();
-            _discRepository.Remove(discToRemove);
+            var itemToRemove = _collectionRepository.FindAllIncludingNestedProps("Disc.Artist").Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name).FirstOrDefault();
+            _collectionRepository.Remove(itemToRemove);
+            _discRepository.Remove(itemToRemove.Disc);
         }
 
         public void SaveDisc(Disc disc)

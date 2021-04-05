@@ -157,7 +157,7 @@ namespace Pan_s_Room
                 {
                     _discServices.RemoveDisc(disc);
                 }
-                catch
+                catch (Exception ex)
                 {
 
                 }

@@ -12,15 +12,21 @@ namespace Services
     {
         private IEntityRepository<WishList> _wishListRepository;
         private IEntityRepository<Disc> _discRepository;
+        private IEntityRepository<Artist> _artistRepository;
+        private IEntityRepository<Collection> _collectionRepository;
         private ILogger _logger;
 
         public WishListServices(IEntityRepository<WishList> wishListRepository,
             IEntityRepository<Disc> discRepository,
-            ILogger logger)
+            ILogger logger,
+            IEntityRepository<Artist> artistRepository,
+            IEntityRepository<Collection> collectionRepository)
         {
             _wishListRepository = wishListRepository;
             _discRepository = discRepository;
             _logger = logger;
+            _artistRepository = artistRepository;
+            _collectionRepository = collectionRepository;
         }
 
         public Disc AddDisc(Disc disc)
@@ -31,6 +37,13 @@ namespace Services
             {
                 throw new ExistingWishListItemInCollectionException();
             }
+            var artists = _artistRepository.FindAll();
+            var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
+            if (existingArtist != null)
+            {
+                disc.Artist = null;
+                disc.ArtistId = existingArtist.Id;
+            }
             SaveDisc(new WishList() { Disc = disc, AlreadyInCollection = false });
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
@@ -39,8 +52,14 @@ namespace Services
 
         public Disc AddDiscAnyways(Disc disc)
         {
-
-            var addedDisc = _wishListRepository.Add(new WishList() { Disc = disc });
+            var artists = _artistRepository.FindAll();
+            var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
+            if (existingArtist != null)
+            {
+                disc.Artist = null;
+                disc.ArtistId = existingArtist.Id;
+            }
+            var addedDisc = _wishListRepository.Add(new WishList() { Disc = disc, AlreadyInCollection = true });
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
             return addedDisc.Disc;
@@ -48,17 +67,16 @@ namespace Services
 
         public void RemoveDisc(Disc disc)
         {
-            var discToBeRemoved = _wishListRepository.FindAll().Where(d => d.Disc == disc).FirstOrDefault();
-            _wishListRepository.Remove(discToBeRemoved);
+            var itemToRemove = GetDiscs().Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name).FirstOrDefault();
+            _wishListRepository.Remove(itemToRemove);
+            _discRepository.Remove(itemToRemove.Disc);
         }
 
         public List<WishList> GetDiscs()
             => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist").ToList();
 
         private List<Disc> GetDiscsFromCollection()
-        {
-            return _discRepository.FindAll().ToList();
-        }
+            =>_collectionRepository.FindAllIncludingNestedProps("Disc.Artist").Select(d => d.Disc).ToList();
 
         public void SaveDisc(WishList disc)
         {

@@ -30,8 +30,12 @@ namespace Repository.Context
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json").Build();
 
-
+#if DEBUG
+            var connectionString = config.GetConnectionString("ConnectionStringDEV");
+#else
             var connectionString = config.GetConnectionString("ConnectionStringPRD");
+#endif
+
 
             if (!optionsBuilder.IsConfigured)
             {

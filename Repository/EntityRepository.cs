@@ -47,7 +47,7 @@ namespace Repository
 
         public void Remove(TEntity entity)
         {
-            _context.Remove(entity);
+            _context.Entry(entity).State = EntityState.Deleted;
             _context.SaveChanges();
         }
     }
