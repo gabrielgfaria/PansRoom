@@ -13,15 +13,15 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly ICollectionServices _discServices;
+        private readonly ICollectionServices _collectionServices;
         private readonly IWishListServices _wishListServices;
         private readonly ILogger _logger;
 
-        public Application(ICollectionServices discServices,
+        public Application(ICollectionServices collectionServices,
             IWishListServices wishListServices,
             ILogger logger)
         {
-            _discServices = discServices;
+            _collectionServices = collectionServices;
             _wishListServices = wishListServices;
             _logger = logger;
         }
@@ -143,7 +143,7 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discsToRemove = _discServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
+            var discsToRemove = _collectionServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
 
             Console.WriteLine("You´re about to remove the following disc(s) from your collection:\n");
             WriteTable(discsToRemove);
@@ -155,7 +155,7 @@ namespace Pan_s_Room
             {
                 try
                 {
-                    _discServices.RemoveDisc(disc);
+                    _collectionServices.RemoveDisc(disc);
                 }
                 catch (Exception ex)
                 {
@@ -238,7 +238,7 @@ namespace Pan_s_Room
 
         private void RetrieveAllRecords()
         {
-            var discs = _discServices.GetDiscs()
+            var discs = _collectionServices.GetDiscs()
                 .OrderBy(d => d.Artist.Name.ToLower().Replace("the", ""))
                 .ThenBy(d => d.Year)
                 .ToList();
@@ -267,7 +267,7 @@ namespace Pan_s_Room
             {
                 try
                 {
-                    _discServices.AddDisc(disc);
+                    _collectionServices.AddDisc(disc);
                 }
                 catch (ExistingDiscInCollectionException)
                 {
@@ -275,7 +275,7 @@ namespace Pan_s_Room
                     var saveAnyways = Console.ReadLine();
                     if (saveAnyways.ToLower() == "y" || saveAnyways.ToLower() == "yes")
                     {
-                        _discServices.AddDiscAnyways(disc);
+                        _collectionServices.AddDiscAnyways(disc);
                         ClearScreen();
                     }
                 }

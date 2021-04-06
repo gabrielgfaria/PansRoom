@@ -26,20 +26,16 @@ namespace Repository.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json").Build();
-
 #if DEBUG
-            var connectionString = config.GetConnectionString("ConnectionStringDEV");
+            var connectionString = @"Data Source=C:\pansroomdev.db";
 #else
-            var connectionString = config.GetConnectionString("ConnectionStringPRD");
+            var connectionString = @"Data Source=C:\pansroom.db";
 #endif
 
 
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlite(connectionString);
             }
         }
 
