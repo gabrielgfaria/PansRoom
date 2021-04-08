@@ -12,8 +12,11 @@ namespace Repository.Context
 {
     public partial class PansRoomContext : DbContext
     {
+        private string _relativePath = @"../pansroom.db";
+
         public PansRoomContext()
         {
+            CreateDb();
         }
 
         public PansRoomContext(DbContextOptions<PansRoomContext> options)
@@ -28,24 +31,18 @@ namespace Repository.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-#if DEBUG
-            var connectionString = @"Data Source=../../../pansroomdev.db";
-#else
-            var connectionString = @"Data Source=../../../pansroom.db";
-#endif
+            var relativeConnectionString = $"Data Source={_relativePath}";
 
-            var builder = new SqliteConnectionStringBuilder(connectionString);
+            var builder = new SqliteConnectionStringBuilder(relativeConnectionString);
             builder.DataSource = Path.GetFullPath(
                 Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     builder.DataSource));
 
-            connectionString = builder.ToString();
+            var connectionString = builder.ToString();
 
             if (!optionsBuilder.IsConfigured)
-            {
                 optionsBuilder.UseSqlite(connectionString);
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -95,6 +92,13 @@ namespace Repository.Context
             });
 
             OnModelCreatingPartial(modelBuilder);
+        }
+
+        //Creates a .db file if one doesn´t already exists
+        private void CreateDb()
+        {
+            if (!File.Exists(_relativePath))
+                base.Database.Migrate();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
