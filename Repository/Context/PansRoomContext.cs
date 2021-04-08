@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
@@ -27,11 +29,18 @@ namespace Repository.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 #if DEBUG
-            var connectionString = @"Data Source=C:\pansroomdev.db";
+            var connectionString = @"Data Source=../../../pansroomdev.db";
 #else
-            var connectionString = @"Data Source=C:\pansroom.db";
+            var connectionString = @"Data Source=../../../pansroom.db";
 #endif
 
+            var builder = new SqliteConnectionStringBuilder(connectionString);
+            builder.DataSource = Path.GetFullPath(
+                Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    builder.DataSource));
+
+            connectionString = builder.ToString();
 
             if (!optionsBuilder.IsConfigured)
             {
