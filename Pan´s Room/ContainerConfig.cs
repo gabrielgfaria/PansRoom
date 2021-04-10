@@ -18,9 +18,9 @@ namespace Pan_s_Room
 
             //Services
             builder.RegisterType<CollectionServices>()
-                .As<ICollectionServices>();
+                .As<IDiscServices<Collection>>();
             builder.RegisterType<WishListServices>()
-                .As<IWishListServices>();
+                .As<IDiscServices<WishList>>();
 
             //Repository
             builder.RegisterGeneric(typeof(EntityRepository<>))

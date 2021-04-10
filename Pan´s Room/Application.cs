@@ -13,12 +13,12 @@ namespace Pan_s_Room
 {
     public class Application : IApplication
     {
-        private readonly ICollectionServices _collectionServices;
-        private readonly IWishListServices _wishListServices;
+        private readonly IDiscServices<Collection> _collectionServices;
+        private readonly IDiscServices<WishList> _wishListServices;
         private readonly ILogger _logger;
 
-        public Application(ICollectionServices collectionServices,
-            IWishListServices wishListServices,
+        public Application(IDiscServices<Collection> collectionServices,
+            IDiscServices<WishList> wishListServices,
             ILogger logger)
         {
             _collectionServices = collectionServices;
@@ -108,10 +108,13 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discsToRemove = _wishListServices.GetDiscs().Where(d => d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Disc.Name.ToLower() == disc.Name.ToLower()).ToList();
+            var discsToRemove = _wishListServices.GetDiscs()
+                .Where(d => d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower()
+                            && d.Disc.Name.ToLower() == disc.Name.ToLower())
+                .ToList();
 
             Console.WriteLine("You´re about to remove the following disc(s) from your wishlist:\n");
-            WriteTable(discsToRemove.Select(d => d.Disc).ToList());
+            WriteTable(discsToRemove.ToList());
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
             var answer = Console.ReadLine();
@@ -143,10 +146,10 @@ namespace Pan_s_Room
             artist.Name = Console.ReadLine();
             disc.Artist = artist;
 
-            var discsToRemove = _collectionServices.GetDiscs().Where(d => d.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Name.ToLower() == disc.Name.ToLower()).ToList();
+            var discsToRemove = _collectionServices.GetDiscs().Where(d => d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower() && d.Disc.Name.ToLower() == disc.Name.ToLower()).ToList();
 
             Console.WriteLine("You´re about to remove the following disc(s) from your collection:\n");
-            WriteTable(discsToRemove);
+            WriteTable(discsToRemove.Select(d => d.Disc).ToList());
             Console.WriteLine();
             Console.WriteLine("Is it correct? [Y] or [N]");
             var answer = Console.ReadLine();
@@ -239,8 +242,9 @@ namespace Pan_s_Room
         private void RetrieveAllRecords()
         {
             var discs = _collectionServices.GetDiscs()
-                .OrderBy(d => d.Artist.Name.ToLower().Replace("the", ""))
-                .ThenBy(d => d.Year)
+                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the", ""))
+                .ThenBy(d => d.Disc.Year)
+                .Select(d => d.Disc)
                 .ToList();
             WriteTable(discs);
         }
