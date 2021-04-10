@@ -50,5 +50,14 @@ namespace Repository
             _context.Entry(entity).State = EntityState.Deleted;
             _context.SaveChanges();
         }
+
+        public void RemoveRange(IEnumerable<TEntity> entities)
+        {
+            foreach(var entity in entities)
+            {
+                _context.Entry(entity).State = EntityState.Deleted;
+            }
+            _context.SaveChanges();
+        }
     }
 }

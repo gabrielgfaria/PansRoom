@@ -18,5 +18,7 @@ namespace Repository
             params string[] propertiesToInclude);
 
         public void Remove(TEntity entity);
+
+        public void RemoveRange(IEnumerable<TEntity> entities);
     }
 }

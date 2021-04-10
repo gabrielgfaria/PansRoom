@@ -181,23 +181,6 @@ namespace Pan_s_Room
             WriteTable(wishListDiscs);
         }
 
-        private List<WishList> TransformIntoWishList(List<WishList> wishListDiscs, List<Disc> discs)
-        {
-            var wishList = new List<WishList>();
-
-            foreach(var wishListDisc in wishListDiscs)
-            {
-                var discInWishList = new WishList();
-                discInWishList.Disc.Name = wishListDisc.Disc.Name;
-                discInWishList.Disc.Artist = wishListDisc.Disc.Artist;
-                discInWishList.Disc.Year = wishListDisc.Disc.Year;
-                discInWishList.AlreadyInCollection = discs.Any(d => d.Name == wishListDisc.Disc.Name && d.Artist.Name == wishListDisc.Disc.Artist.Name);
-
-                wishList.Add(discInWishList);
-            }
-            return wishList;
-        }
-
         private void RegisterNewRecordToWishList()
         {
             var disc = new Disc();

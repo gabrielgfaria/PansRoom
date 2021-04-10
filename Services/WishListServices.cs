@@ -8,7 +8,7 @@ using Repository;
 
 namespace Services
 {
-    public class WishListServices : IWishListServices
+    public class WishListServices : IDiscServices<WishList>
     {
         private IEntityRepository<WishList> _wishListRepository;
         private IEntityRepository<Disc> _discRepository;
@@ -44,7 +44,7 @@ namespace Services
                 disc.Artist = null;
                 disc.ArtistId = existingArtist.Id;
             }
-            SaveDisc(new WishList() { Disc = disc, AlreadyInCollection = false });
+            SaveDisc(disc);
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
             return disc;
@@ -67,20 +67,23 @@ namespace Services
 
         public void RemoveDisc(Disc disc)
         {
-            var itemToRemove = GetDiscs().Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name).FirstOrDefault();
-            _wishListRepository.Remove(itemToRemove);
-            _discRepository.Remove(itemToRemove.Disc);
+            var itemToRemove = _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
+                .Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name);
+            _wishListRepository.RemoveRange(itemToRemove);
+            _discRepository.RemoveRange(itemToRemove.Select(d => d.Disc));
+            _logger.SetLogMessage("The disc(s) was(were) successfully removed from your wishlist");
         }
-
-        public List<WishList> GetDiscs()
-            => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist").ToList();
 
         private List<Disc> GetDiscsFromCollection()
-            =>_collectionRepository.FindAllIncludingNestedProps("Disc.Artist").Select(d => d.Disc).ToList();
+            => _collectionRepository.FindAllIncludingNestedProps("Disc.Artist")
+            .Select(d => d.Disc)
+            .ToList();
 
-        public void SaveDisc(WishList disc)
-        {
-            _wishListRepository.Add(disc);
-        }
+        public List<WishList> GetDiscs()
+            => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
+            .ToList();
+
+        public void SaveDisc(Disc disc)
+            => _wishListRepository.Add(new WishList() { Disc = disc, AlreadyInCollection = false });
     }
 }

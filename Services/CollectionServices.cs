@@ -7,16 +7,16 @@ using Repository;
 
 namespace Services
 {
-    public class CollectionServices : ICollectionServices
+    public class CollectionServices : IDiscServices<Collection>
     {
         private IEntityRepository<Disc> _discRepository;
         private IEntityRepository<WishList> _wishListRepository;
         private IEntityRepository<Collection> _collectionRepository;
         private IEntityRepository<Artist> _artistRepository;
-        private IWishListServices _wishListServices;
+        private IDiscServices<WishList> _wishListServices;
         private ILogger _logger;
 
-        public CollectionServices(IWishListServices wishListServices,
+        public CollectionServices(IDiscServices<WishList> wishListServices,
             IEntityRepository<Disc> discRepository,
             IEntityRepository<WishList> wishListRepository,
             ILogger logger,
@@ -34,10 +34,10 @@ namespace Services
         public Disc AddDisc(Disc disc)
         {
             var existingDiscs = GetDiscs();
-            var wishList = _wishListServices.GetDiscs();
+            var wishList = _wishListRepository.FindAllIncludingNestedProps("Disc.Artist").ToList();
 
-            if (existingDiscs.Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
-            d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
+            if (existingDiscs.Any(d => d.Disc.Name.ToLower() == disc.Name.ToLower() &&
+            d.Disc.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
             {
                 throw new ExistingDiscInCollectionException();
             }
@@ -84,14 +84,17 @@ namespace Services
             return addedDisc.Disc;
         }
 
-        public List<Disc> GetDiscs()
-            => _collectionRepository.FindAllIncludingNestedProps("Disc.Artist").Select(d => d.Disc).ToList();
+        public List<Collection> GetDiscs()
+            => _collectionRepository.FindAllIncludingNestedProps("Disc.Artist")
+            .ToList();
 
         public void RemoveDisc(Disc disc)
         {
-            var itemToRemove = _collectionRepository.FindAllIncludingNestedProps("Disc.Artist").Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name).FirstOrDefault();
-            _collectionRepository.Remove(itemToRemove);
-            _discRepository.Remove(itemToRemove.Disc);
+            var itemToRemove = _collectionRepository.FindAllIncludingNestedProps("Disc.Artist")
+                .Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name);
+            _collectionRepository.RemoveRange(itemToRemove);
+            _discRepository.RemoveRange(itemToRemove.Select(d => d.Disc));
+            _logger.SetLogMessage("The disc(s) was(were) successfully removed from your collection");
         }
 
         public void SaveDisc(Disc disc)
