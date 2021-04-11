@@ -8,7 +8,7 @@ using Repository;
 
 namespace Services
 {
-    public class WishListServices : IDiscServices<WishList>
+    public class WishListServices : DiscServices<WishList>
     {
         private IEntityRepository<WishList> _wishListRepository;
         private IEntityRepository<Disc> _discRepository;
@@ -21,6 +21,7 @@ namespace Services
             ILogger logger,
             IEntityRepository<Artist> artistRepository,
             IEntityRepository<Collection> collectionRepository)
+            : base (artistRepository)
         {
             _wishListRepository = wishListRepository;
             _discRepository = discRepository;
@@ -29,7 +30,7 @@ namespace Services
             _collectionRepository = collectionRepository;
         }
 
-        public Disc AddDisc(Disc disc)
+        public override Disc AddDisc(Disc disc)
         {
             if (DiscExistsInCollection(disc))
                 throw new ExistingWishListItemInCollectionException();
@@ -42,28 +43,7 @@ namespace Services
             return disc;
         }
 
-        private void SetArtist(Disc disc)
-        {
-            var artists = _artistRepository.FindAll();
-            var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
-            if (existingArtist != null)
-            {
-                disc.Artist = null;
-                disc.ArtistId = existingArtist.Id;
-            }
-        }
-
-        private bool DiscExistsInCollection(Disc disc)
-        {
-            var existingDiscs = GetDiscsFromCollection();
-            if (existingDiscs.Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
-                d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
-                return true;
-            
-            return false;
-        }
-
-        public Disc AddDiscAnyways(Disc disc)
+        public override Disc AddDiscAnyways(Disc disc)
         {
             SetArtist(disc);
 
@@ -74,7 +54,11 @@ namespace Services
             return disc;
         }
 
-        public void RemoveDisc(Disc disc)
+        public override List<WishList> GetDiscs()
+            => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
+            .ToList();
+        
+        public override void RemoveDisc(Disc disc)
         {
             var itemToRemove = _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
                 .Where(d => d.Disc.Artist.Name == disc.Artist.Name && d.Disc.Name == disc.Name);
@@ -83,16 +67,23 @@ namespace Services
             _logger.SetLogMessage("The disc(s) was(were) successfully removed from your wishlist");
         }
 
+        
         private List<Disc> GetDiscsFromCollection()
             => _collectionRepository.FindAllIncludingNestedProps("Disc.Artist")
             .Select(d => d.Disc)
             .ToList();
 
-        public List<WishList> GetDiscs()
-            => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
-            .ToList();
-
         private void SaveDisc(WishList disc)
             => _wishListRepository.Add(disc);
+
+        private bool DiscExistsInCollection(Disc disc)
+        {
+            var existingDiscs = GetDiscsFromCollection();
+            if (existingDiscs.Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
+                d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
+                return true;
+
+            return false;
+        }
     }
 }
