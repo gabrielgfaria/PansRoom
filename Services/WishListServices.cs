@@ -31,26 +31,18 @@ namespace Services
 
         public Disc AddDisc(Disc disc)
         {
-            var existingDiscs = GetDiscsFromCollection();
-            if (existingDiscs.Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
-                d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
-            {
+            if (DiscExistsInCollection(disc))
                 throw new ExistingWishListItemInCollectionException();
-            }
-            var artists = _artistRepository.FindAll();
-            var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
-            if (existingArtist != null)
-            {
-                disc.Artist = null;
-                disc.ArtistId = existingArtist.Id;
-            }
+
+            SetArtist(disc);
+            
             SaveDisc(new WishList() { Disc = disc, AlreadyInCollection = false });
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
             return disc;
         }
 
-        public Disc AddDiscAnyways(Disc disc)
+        private void SetArtist(Disc disc)
         {
             var artists = _artistRepository.FindAll();
             var existingArtist = artists.SingleOrDefault(a => a.Name.ToLower() == disc.Artist.Name.ToLower());
@@ -59,10 +51,27 @@ namespace Services
                 disc.Artist = null;
                 disc.ArtistId = existingArtist.Id;
             }
-            var addedDisc = _wishListRepository.Add(new WishList() { Disc = disc, AlreadyInCollection = true });
+        }
+
+        private bool DiscExistsInCollection(Disc disc)
+        {
+            var existingDiscs = GetDiscsFromCollection();
+            if (existingDiscs.Any(d => d.Name.ToLower() == disc.Name.ToLower() &&
+                d.Artist.Name.ToLower() == disc.Artist.Name.ToLower()))
+                return true;
+            
+            return false;
+        }
+
+        public Disc AddDiscAnyways(Disc disc)
+        {
+            SetArtist(disc);
+
+            SaveDisc(new WishList() { Disc = disc, AlreadyInCollection = true });
+
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
-            return addedDisc.Disc;
+            return disc;
         }
 
         public void RemoveDisc(Disc disc)
