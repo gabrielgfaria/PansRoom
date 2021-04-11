@@ -12,7 +12,6 @@ namespace Services
         Disc AddDisc(Disc disc);
         Disc AddDiscAnyways(Disc disc);
         List<TEntity> GetDiscs();
-        void SaveDisc(Disc disc);
         void RemoveDisc(Disc disc);
     }
 }

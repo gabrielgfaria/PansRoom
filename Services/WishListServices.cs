@@ -44,7 +44,7 @@ namespace Services
                 disc.Artist = null;
                 disc.ArtistId = existingArtist.Id;
             }
-            SaveDisc(disc);
+            SaveDisc(new WishList() { Disc = disc, AlreadyInCollection = false });
             _logger.SetLogMessage("The disc was successfully added to your wishlist");
 
             return disc;
@@ -83,7 +83,7 @@ namespace Services
             => _wishListRepository.FindAllIncludingNestedProps("Disc.Artist")
             .ToList();
 
-        public void SaveDisc(Disc disc)
-            => _wishListRepository.Add(new WishList() { Disc = disc, AlreadyInCollection = false });
+        private void SaveDisc(WishList disc)
+            => _wishListRepository.Add(disc);
     }
 }

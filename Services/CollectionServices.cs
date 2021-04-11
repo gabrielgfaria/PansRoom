@@ -55,7 +55,7 @@ namespace Services
                 disc.Artist = null;
                 disc.ArtistId = existingArtist.Id;
             }
-            SaveDisc(disc);
+            SaveDisc(new Collection() { Disc = disc });
             _logger.SetLogMessage("The disc was successfully added to your collection");
 
             return disc;
@@ -97,10 +97,9 @@ namespace Services
             _logger.SetLogMessage("The disc(s) was(were) successfully removed from your collection");
         }
 
-        public void SaveDisc(Disc disc)
+        private  void SaveDisc(Collection disc)
         {
-            var newItem = new Collection() { Disc = disc };
-            _collectionRepository.Add(newItem);
+            _collectionRepository.Add(disc);
         }
     }
 }
