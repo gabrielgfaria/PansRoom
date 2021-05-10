@@ -225,7 +225,7 @@ namespace Pan_s_Room
         private void RetrieveAllRecords()
         {
             var discs = _collectionServices.GetDiscs()
-                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the", ""))
+                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the ", ""))
                 .ThenBy(d => d.Disc.Year)
                 .Select(d => d.Disc)
                 .ToList();
