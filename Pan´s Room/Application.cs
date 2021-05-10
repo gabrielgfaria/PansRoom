@@ -174,7 +174,7 @@ namespace Pan_s_Room
         private void RetrieveAllRecordsFromWishList()
         {
             var wishListDiscs = _wishListServices.GetDiscs()
-                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the", ""))
+                .OrderBy(d => d.Disc.Artist.Name.ToLower().Replace("the ", ""))
                 .ThenBy(d => d.Disc.Year)
                 .ToList();
 
