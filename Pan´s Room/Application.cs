@@ -103,6 +103,7 @@ namespace Pan_s_Room
             Console.WriteLine("4- Remove a record from your wish-list");
             Console.WriteLine("5- See all registered records");
             Console.WriteLine("6- See all records on your wish-list");
+            Console.WriteLine("7- (Beta) Add all records from a single artist to wishlist");
             Console.WriteLine("\nOr type 'exit' to quit the application");
             Console.WriteLine();
             Console.Write("You choose option: ");
