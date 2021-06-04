@@ -47,24 +47,28 @@ namespace Pan_s_Room
                         RegisterNewRecord();
                         ClearScreen();
                         _logger.Log();
+                        ClearScreen();
                         break;
                     case "2":
                         ClearScreen();
                         RegisterNewRecordToWishList();
                         ClearScreen();
                         _logger.Log();
+                        ClearScreen();
                         break;
                     case "3":
                         ClearScreen();
                         RemoveRecordFromCollection();
                         ClearScreen();
                         _logger.Log();
+                        ClearScreen();
                         break;
                     case "4":
                         ClearScreen();
                         RemoveRecordFromWishList();
                         ClearScreen();
                         _logger.Log();
+                        ClearScreen();
                         break;
                     case "5":
                         ClearScreen();
