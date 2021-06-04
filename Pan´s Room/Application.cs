@@ -80,6 +80,12 @@ namespace Pan_s_Room
                         RetrieveAllRecordsFromWishList();
                         Console.WriteLine();
                         break;
+                    case "7":
+                        ClearScreen();
+                        Console.WriteLine("Which Artist?");
+                        var artirst = Console.ReadLine();
+                        Console.WriteLine();
+                        break;
                     case "exit":
                         break;
                     default:
